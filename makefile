@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall
 main: main.o BDD.o InitStruct.o moteur.o
-	$(CC) $(CFLAGS) -o main main.o BDD.o InitStruct.o moteur.o -lsqlite3
+	$(CC) $(CFLAGS) -o main main.o BDD.o InitStruct.o moteur.o
 main.o: main.c BDD.h InitStruct.h moteur.h includeGlobal.h
 	$(CC) $(CFLAGS) -c main.c
 BDD.o: BDD.c BDD.h
