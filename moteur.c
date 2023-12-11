@@ -43,7 +43,6 @@ void fromTaxisToPiste(Taxis **t, Piste **p, int categorie)
 {
     if ((*t)->premier == NULL)
     {
-        printf("Le taxi est vide\n");
         return;
     }
 
@@ -56,7 +55,7 @@ void fromTaxisToPiste(Taxis **t, Piste **p, int categorie)
         *t = (*t)->suivant;
     }
 
-    if ((*p)->premier != NULL && (*t)->nbAvions < (*t)->capacite)
+    if ((*p)->premier == NULL && (*t)->nbAvions < (*t)->capacite && (*t)->premier != NULL)
     {
         ajouteEnFin(&(*p)->premier, (*t)->premier);
         supprimeEnTete(&(*t)->premier);
@@ -85,29 +84,24 @@ void decollage(Piste **p, EnVol **e, int categorie, int timeG)
     {
         actuel = actuel->suivant;
     }
-    printf("test\n");
     if (actuel->premier != NULL)
     {
         actuel->premier->time = timeG + 20;
-        printf("L'avion %d est en vol\n", actuel->premier->identifiant);
         switch (categorie)
         {
         case 1:
-            printf("test\n");
             ajouteEnFin(&(*e)->premierG, actuel->premier);
             supprimeAvion(&(*p)->premier, actuel->premier->identifiant);
             (*e)->nbAvions++;
             break;
 
         case 2:
-            printf("test2\n");
             ajouteEnFin(&(*e)->premierM, actuel->premier);
             supprimeAvion(&(*p)->premier, actuel->premier->identifiant);
             (*e)->nbAvions++;
             break;
 
         case 3:
-            printf("test3\n");
             ajouteEnFin(&(*e)->premierP, actuel->premier);
             supprimeAvion(&(*p)->premier, actuel->premier->identifiant);
             (*e)->nbAvions++;
@@ -185,20 +179,16 @@ void fromPisteToParking(Piste **p, Parking **park, int categorie, int timeG)
 {
     Piste *actuel = malloc(sizeof(*actuel));
     actuel = *p;
-    printf("test\n");
     while (actuel->numero != categorie)
     {
         actuel = actuel->suivant;
     }
-    printf("test2\n");
-    if (actuel->premier == NULL)
+    if (actuel->premier != NULL)
     {
         actuel->premier->time = timeG + 20;
-        printf("test3\n");
         if ((*park)->nbAvions < (*park)->capacite)
         {
             Parking *actuel2 = malloc(sizeof(*actuel2));
-            printf("test4\n");
             actuel2 = *park;
             while (actuel2->numero != categorie)
             {
@@ -207,7 +197,6 @@ void fromPisteToParking(Piste **p, Parking **park, int categorie, int timeG)
             ajouteEnFin(&actuel2->premier, actuel->premier);
             supprimeEnTete(&actuel->premier);
             actuel2->nbAvions++;
-            printf("test5\n");
             *p = actuel;
             *park = actuel2;
         }
