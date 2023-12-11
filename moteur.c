@@ -79,35 +79,44 @@ void testTaxisToPiste(Taxis **t, Piste **p)
 
 void decollage(Piste **p, EnVol **e, int categorie, int timeG)
 {
-
-    while ((*p)->numero != categorie)
+    Piste *actuel = malloc(sizeof(*actuel));
+    actuel = *p;
+    while (actuel->numero != categorie)
     {
-        *p = (*p)->suivant;
+        actuel = actuel->suivant;
     }
-    (*p)->premier->time = timeG + 20;
-    switch (categorie)
+    printf("test\n");
+    if (actuel->premier != NULL)
     {
-    case 1:
-        ajouteEnFin(&(*e)->premierG, (*p)->premier);
-        supprimeEnTete(&(*p)->premier);
-        (*e)->nbAvions++;
-        break;
+        actuel->premier->time = timeG + 20;
+        printf("L'avion %d est en vol\n", actuel->premier->identifiant);
+        switch (categorie)
+        {
+        case 1:
+            printf("test\n");
+            ajouteEnFin(&(*e)->premierG, actuel->premier);
+            supprimeAvion(&(*p)->premier, actuel->premier->identifiant);
+            (*e)->nbAvions++;
+            break;
 
-    case 2:
-        ajouteEnFin(&(*e)->premierM, (*p)->premier);
-        supprimeEnTete(&(*p)->premier);
-        (*e)->nbAvions++;
-        break;
+        case 2:
+            printf("test2\n");
+            ajouteEnFin(&(*e)->premierM, actuel->premier);
+            supprimeAvion(&(*p)->premier, actuel->premier->identifiant);
+            (*e)->nbAvions++;
+            break;
 
-    case 3:
+        case 3:
+            printf("test3\n");
+            ajouteEnFin(&(*e)->premierP, actuel->premier);
+            supprimeAvion(&(*p)->premier, actuel->premier->identifiant);
+            (*e)->nbAvions++;
 
-        ajouteEnFin(&(*e)->premierP, (*p)->premier);
-        supprimeEnTete(&(*p)->premier);
-        (*e)->nbAvions++;
-        break;
+            break;
 
-    default:
-        break;
+        default:
+            break;
+        }
     }
 }
 
@@ -116,7 +125,6 @@ int testDecollage(Piste **p, EnVol **e, int timeG)
     for (int i = 1; i < 4; i++)
     {
         decollage(p, e, i, timeG);
-
     }
     return 0;
 }
@@ -175,20 +183,34 @@ void testAtterissage(Parking **p, Piste **pi, EnVol **e, int timeG)
 
 void fromPisteToParking(Piste **p, Parking **park, int categorie, int timeG)
 {
-    while ((*p)->numero != categorie)
+    Piste *actuel = malloc(sizeof(*actuel));
+    actuel = *p;
+    printf("test\n");
+    while (actuel->numero != categorie)
     {
-        *p = (*p)->suivant;
+        actuel = actuel->suivant;
     }
-    (*p)->premier->time = timeG + 20;
-    if ((*park)->nbAvions < (*park)->capacite)
+    printf("test2\n");
+    if (actuel->premier == NULL)
     {
-        while ((*park)->numero != categorie)
+        actuel->premier->time = timeG + 20;
+        printf("test3\n");
+        if ((*park)->nbAvions < (*park)->capacite)
         {
-            *park = (*park)->suivant;
+            Parking *actuel2 = malloc(sizeof(*actuel2));
+            printf("test4\n");
+            actuel2 = *park;
+            while (actuel2->numero != categorie)
+            {
+                actuel2 = actuel2->suivant;
+            }
+            ajouteEnFin(&actuel2->premier, actuel->premier);
+            supprimeEnTete(&actuel->premier);
+            actuel2->nbAvions++;
+            printf("test5\n");
+            *p = actuel;
+            *park = actuel2;
         }
-        ajouteEnFin(&(*park)->premier, (*p)->premier);
-        supprimeEnTete(&(*p)->premier);
-        (*park)->nbAvions++;
     }
 }
 
