@@ -239,6 +239,10 @@ Avion *rechercheParTempsEnVol(EnVol *e, int categorie, int timeG)
         }
         else
         {
+            if (actuel->suivant == NULL)
+            {
+                break;
+            }
             actuel = actuel->suivant;
         }
     }
@@ -255,19 +259,20 @@ Avion *rechercheParTempsParking(Parking *p, int categorie, int timeG)
         p = p->suivant;
     }
     actuel = p->premier;
-    while (i < 1)
+    while (p->nbAvions> i)
     {
         if (actuel->time <= timeG)
         {
-            i++;
+            return actuel;
         }
         else
         {
             actuel = actuel->suivant;
         }
+        i++;
     }
 
-    return actuel;
+    return NULL;
 }
 
 void supprimeAvion(Avion **a, int id)
