@@ -1,4 +1,4 @@
-# Projet-BLD :
+# Project-BLD :
 <h2 style="text-align: center">A simulation of an airport gestion software in C</h2>
 <h3>The instructions were :</h3>
 
