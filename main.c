@@ -17,6 +17,8 @@ int main(int argc, char const *argv[])
     time_t currentTime;
     AssgnBdd(&e, &p);
     animBegining();
+    sleep(1.5);
+    system("clear");
     while (1)
     {
         currentTime = time(NULL) - startTime;
