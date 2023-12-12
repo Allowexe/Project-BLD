@@ -232,25 +232,32 @@ void ajouteEnFinParId(Avion **nouveau, Avion *Ancien, int timeG, int id)
 {
     if (id != 0)
     {
-        Avion *actuel = malloc(sizeof(*actuel));
-        actuel = Ancien;
-        while (actuel->identifiant != id)
+        Avion *actuel = Ancien;
+        while (actuel != NULL && actuel->identifiant != id)
         {
             actuel = actuel->suivant;
         }
-        actuel->suivant = NULL;
-        actuel->time = timeG + 20;
-        if ((*nouveau) == NULL)
+
+        if (actuel != NULL) // if a plane with the given id was found
         {
-            *nouveau = actuel;
-        }
-        else
-        {
-            while ((*nouveau)->suivant != NULL)
+            Avion *newNode = malloc(sizeof(*newNode));
+            *newNode = *actuel; // copy the data
+            newNode->suivant = NULL;
+            newNode->time = timeG + 20;
+
+            if (*nouveau == NULL)
             {
-                *nouveau = (*nouveau)->suivant;
+                *nouveau = newNode;
             }
-            (*nouveau)->suivant = actuel;
+            else
+            {
+                Avion *temp = *nouveau;
+                while (temp->suivant != NULL)
+                {
+                    temp = temp->suivant;
+                }
+                temp->suivant = newNode;
+            }
         }
     }
 }
