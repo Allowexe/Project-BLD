@@ -9,4 +9,4 @@
 - No graphical library should be used.
 
 ##### Overall, what did we managed to do ?
-- Incoming...
+- The engine works fine without anything showing up. Now we should use the `affichage.c` in order to show a beautiful interface.
