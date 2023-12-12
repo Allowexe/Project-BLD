@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -Wall
 
-main: main.o BDD.o InitStruct.o moteur.o
-	$(CC) $(CFLAGS) -o main main.o BDD.o InitStruct.o moteur.o
+main: main.o BDD.o InitStruct.o moteur.o affichage.o
+	$(CC) $(CFLAGS) -o main main.o BDD.o InitStruct.o moteur.o affichage.o
 
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c
@@ -15,6 +15,9 @@ InitStruct.o: InitStruct.c
 
 moteur.o: moteur.c
 	$(CC) $(CFLAGS) -c moteur.c
+	
+affichage.o: affichage.c
+	$(CC) $(CFLAGS) -c affichage.c
 
 clean:
 	rm -f *.o
