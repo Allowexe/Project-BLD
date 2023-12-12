@@ -296,10 +296,10 @@ void animBegining()
     }
 }
 
-int main(void)
-{
+// int main(void)
+// {
     
-    //dessinAeroport(5, 2, 1, 2, 4, 5);
-    animBegining();
-    return 0;
-}
+//     //dessinAeroport(5, 2, 1, 2, 4, 5, 1, 1, 1);
+//     animBegining();
+//     return 0;
+// }
