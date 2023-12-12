@@ -29,5 +29,6 @@ enum categoriePiste
 };
 
 void dessinAeroport();
+void animBegining();
 
 #endif
