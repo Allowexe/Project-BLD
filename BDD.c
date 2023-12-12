@@ -239,7 +239,7 @@ Avion *rechercheParTempsEnVol(EnVol *e, int categorie, int timeG)
         }
         else
         {
-            if (actuel->suivant == NULL)
+            if (actuel->suivant == NULL && actuel == NULL)
             {
                 break;
             }
