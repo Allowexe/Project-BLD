@@ -9,8 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
-#include "Stuctures.h"
-#include "affichage.h"
 #define NB_AVION 50
+#define ATTENTE 10
 
 #endif
