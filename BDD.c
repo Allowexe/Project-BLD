@@ -1,8 +1,8 @@
-#include "includeGlobal.h"
-#include "Stuctures.h"
-#include "moteur.h"
 #include "BDD.h"
-#include "InitStruct.h"
+#include "initStruct.h"
+#include "moteur.h"
+#include "Structures.h"
+#include "includeGlobal.h"
 
 void InitialisationBdd()
 {
@@ -117,63 +117,92 @@ void AssgnBdd(EnVol **e, Parking **p)
     }
 
     int nb_av = 0;
-    printf("Fichier ouvert avec succès\n");
     fscanf(fichier, "Nombre d'avions: %d\n", &nb_av);
-    printf("Nombre d'avions: %d\n", nb_av);
     for (int i = 0; i < nb_av; i++)
     {
-        Avion *nouveau = malloc(sizeof(*nouveau));
-        fscanf(fichier, "ID: %02d ", &nouveau->identifiant);
-        fscanf(fichier, "Categorie: %d ", &nouveau->categorie);
-        fscanf(fichier, "Etat: %d ", &nouveau->etat);
-        fscanf(fichier, "Passagers: %d ", &nouveau->NbPassagers);
-        fscanf(fichier, "Temps: %d\n", &nouveau->time);
-        if (nouveau->etat == 1)
+        Avion *new = malloc(sizeof(Avion));
+        fscanf(fichier, "ID: %d ", &new->identifiant);
+        fscanf(fichier, "Categorie: %d ", &new->categorie);
+        fscanf(fichier, "Etat: %d ", &new->etat);
+        fscanf(fichier, "Passagers: %d ", &new->NbPassagers);
+        fscanf(fichier, "Temps: %d\n", &new->time);
+        if (new->etat == 0)
         {
-            (*e)->nbAvions++;
-            switch (nouveau->categorie)
+            switch (new->categorie)
             {
             case 1:
-                ajouteEnFin(&(*e)->premierG, nouveau);
+                if ((*p)->premierG == NULL)
+                {
+                    (*p)->premierG = new;
+                }
+                else
+                {
+                    ajouteEnFin(&(*p)->premierG, new);
+                }
                 break;
-
             case 2:
-                ajouteEnFin(&(*e)->premierM, nouveau);
+                if ((*p)->premierM == NULL)
+                {
+                    (*p)->premierM = new;
+                }
+                else
+                {
+                    ajouteEnFin(&(*p)->premierM, new);
+                }
                 break;
-
             case 3:
-                ajouteEnFin(&(*e)->premierP, nouveau);
+                if ((*p)->premierP == NULL)
+                {
+                    (*p)->premierP = new;
+                }
+                else
+                {
+                    ajouteEnFin(&(*p)->premierP, new);
+                }
                 break;
-
             default:
                 break;
             }
         }
         else
         {
-            (*p)->nbAvions++;
-            switch (nouveau->categorie)
+            switch (new->categorie)
             {
             case 1:
-                ajouteEnFin(&(*p)->premier, nouveau);
+                if ((*e)->premierG == NULL)
+                {
+                    (*e)->premierG = new;
+                }
+                else
+                {
+                    ajouteEnFin(&(*e)->premierG, new);
+                }
                 break;
-
             case 2:
-                ajouteEnFin(&(*p)->suivant->premier, nouveau);
+                if ((*e)->premierM == NULL)
+                {
+                    (*e)->premierM = new;
+                }
+                else
+                {
+                    ajouteEnFin(&(*e)->premierM, new);
+                }
                 break;
-
             case 3:
-                ajouteEnFin(&(*p)->suivant->suivant->premier, nouveau);
+                if ((*e)->premierP == NULL)
+                {
+                    (*e)->premierP = new;
+                }
+                else
+                {
+                    ajouteEnFin(&(*e)->premierP, new);
+                }
                 break;
-
             default:
                 break;
             }
         }
     }
-
-    printf("Fin de l'assignation\n");
-    // initialisation de la BDD effectuée, fermeture du fichier
     fclose(fichier);
 }
 
@@ -199,6 +228,33 @@ void ajouteEnFin(Avion **a, Avion *nouveau)
     }
 }
 
+void ajouteEnFinParId(Avion **nouveau, Avion *Ancien, int timeG, int id)
+{
+    if (id != 0)
+    {
+        Avion *actuel = malloc(sizeof(*actuel));
+        actuel = Ancien;
+        while (actuel->identifiant != id)
+        {
+            actuel = actuel->suivant;
+        }
+        actuel->suivant = NULL;
+        actuel->time = timeG + 20;
+        if ((*nouveau) == NULL)
+        {
+            *nouveau = actuel;
+        }
+        else
+        {
+            while ((*nouveau)->suivant != NULL)
+            {
+                *nouveau = (*nouveau)->suivant;
+            }
+            (*nouveau)->suivant = actuel;
+        }
+    }
+}
+
 void supprimeEnTete(Avion **a)
 {
     Avion *nouveau = malloc(sizeof(*nouveau));
@@ -209,76 +265,32 @@ void supprimeEnTete(Avion **a)
     *a = (*a)->suivant;
 }
 
-Avion *rechercheParTempsEnVol(EnVol *e, int categorie, int timeG)
+int rechercheParTemps(Avion *a, int timeG, int **timeA)
 {
     Avion *actuel = malloc(sizeof(*actuel));
-    int i = 0;
-    switch (categorie)
-    {
-    case 1:
-        actuel = e->premierG;
-        break;
-
-    case 2:
-        actuel = e->premierM;
-        break;
-
-    case 3:
-        actuel = e->premierP;
-        break;
-
-    default:
-        break;
-    }
-
-    while (i < 1)
+    actuel = a;
+    while (actuel != NULL)
     {
         if (actuel->time <= timeG)
         {
-            i++;
+            **timeA = actuel->time;
+            return actuel->identifiant;
         }
-        else
-        {
-            if (actuel->suivant == NULL && actuel == NULL)
-            {
-                break;
-            }
-            actuel = actuel->suivant;
-        }
+        actuel = actuel->suivant;
     }
-
-    return actuel;
-}
-
-Avion *rechercheParTempsParking(Parking *p, int categorie, int timeG)
-{
-    Avion *actuel = malloc(sizeof(*actuel));
-    int i = 0;
-    while (p->numero != categorie)
-    {
-        p = p->suivant;
-    }
-    actuel = p->premier;
-    while (p->nbAvions> i)
-    {
-        if (actuel->time <= timeG)
-        {
-            return actuel;
-        }
-        else
-        {
-            actuel = actuel->suivant;
-        }
-        i++;
-    }
-
-    return NULL;
+    return 0;
 }
 
 void supprimeAvion(Avion **a, int id)
 {
     Avion *actuel = *a;
     Avion *precedent = NULL;
+    if (actuel != NULL && actuel->identifiant == id)
+    {
+        *a = actuel->suivant;
+        free(actuel);
+        return;
+    }
     while (actuel != NULL && actuel->identifiant != id)
     {
         precedent = actuel;
@@ -286,174 +298,20 @@ void supprimeAvion(Avion **a, int id)
     }
     if (actuel == NULL)
     {
-        printf("L'avion n'existe pas\n");
+        return;
     }
-    else if (precedent == NULL)
-    {
-        *a = actuel->suivant;
-        free(actuel);
-    }
-    else
-    {
-        precedent->suivant = actuel->suivant;
-        free(actuel);
-    }
+    precedent->suivant = actuel->suivant;
+    free(actuel);
 }
 
-void printAllAvion(Avion *a)
+
+int compteAvion(Avion *a)
 {
-    Avion *actuel = a;
-    while (actuel != NULL)
+    int cpt = 0;
+    while (a != NULL)
     {
-        printf("ID: %d ", actuel->identifiant);
-        printf("Categorie: %d ", actuel->categorie);
-        printf("Etat: %d ", actuel->etat);
-        printf("Passagers: %d\n", actuel->NbPassagers);
-        actuel = actuel->suivant;
+        cpt++;
+        a = a->suivant;
     }
-}
-
-void sauvegardeBdd(EnVol *e, Parking *p, Taxis *t, Piste *pi, int timeG)
-{
-    FILE *fichier;
-    fichier = fopen("bdd.txt", "w");
-    if (fichier == NULL)
-    {
-        printf("Erreur lors de l'ouverture du fichier\n");
-        exit(1);
-    }
-    else
-    {
-        printf("Fichier ouvert avec succès\n");
-        fprintf(fichier, "Nombre d'avions: %d\n", NB_AVION);
-        Avion *actuel = malloc(sizeof(*actuel));
-        for (int i = 0; i < 3; i++)
-        {
-            switch (i)
-            {
-            case 0:
-                actuel = e->premierG;
-                break;
-
-            case 1:
-                actuel = e->premierM;
-                break;
-
-            case 2:
-                actuel = e->premierP;
-                break;
-
-            default:
-                break;
-            }
-            while (actuel != NULL)
-            {
-                fprintf(fichier, "ID: %02d ", actuel->identifiant);
-                fprintf(fichier, "Categorie: %d ", actuel->categorie);
-                fprintf(fichier, "Etat: %d ", actuel->etat);
-                fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
-                fprintf(fichier, "Temps: %d\n", (actuel->time-timeG));
-                actuel = actuel->suivant;
-            }
-        }
-        for (int i = 0; i < 3; i++)
-        {
-            switch (i)
-            {
-            case 0:
-                actuel = p->premier;
-                break;
-
-            case 1:
-                actuel = p->suivant->premier;
-                break;
-
-            case 2:
-                actuel = p->suivant->suivant->premier;
-                break;
-
-            default:
-                break;
-            }
-            while (actuel != NULL)
-            {
-                fprintf(fichier, "ID: %02d ", actuel->identifiant);
-                fprintf(fichier, "Categorie: %d ", actuel->categorie);
-                fprintf(fichier, "Etat: %d ", actuel->etat);
-                fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
-                fprintf(fichier, "Temps: %d\n", actuel->time-timeG);
-                actuel = actuel->suivant;
-            }
-        }
-        if (t->premier != NULL)
-        {
-            for (int i = 0; i < 3; i++)
-            {
-                switch (i)
-                {
-                case 0:
-                    actuel = t->premier;
-                    break;
-
-                case 1:
-                    actuel = t->suivant->premier;
-                    break;
-
-                case 2:
-                    actuel = t->suivant->suivant->premier;
-                    break;
-
-                default:
-                    break;
-                }
-
-                while (actuel != NULL)
-                {
-                    fprintf(fichier, "ID: %02d ", actuel->identifiant);
-                    fprintf(fichier, "Categorie: %d ", actuel->categorie);
-                    fprintf(fichier, "Etat: %d ", actuel->etat);
-                    fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
-                    fprintf(fichier, "Temps: %d\n", actuel->time-timeG);
-                    actuel = actuel->suivant;
-                }
-            }
-        }
-
-        if (pi->premier != NULL)
-        {
-            for (int i = 0; i < 3; i++)
-            {
-                
-                switch (i)
-                {
-                case 0:
-                    actuel = pi->premier;
-                    break;
-
-                case 1:
-                    actuel = pi->suivant->premier;
-                    break;
-
-                case 2:
-                    actuel = pi->suivant->suivant->premier;
-                    break;
-
-                default:
-                    break;
-                }
-                while (actuel != NULL)
-                {
-                    fprintf(fichier, "ID: %02d ", actuel->identifiant);
-                    fprintf(fichier, "Categorie: %d ", actuel->categorie);
-                    fprintf(fichier, "Etat: %d ", actuel->etat);
-                    fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
-                    fprintf(fichier, "Temps: %d\n", actuel->time-timeG);
-                    actuel = actuel->suivant;
-                }
-            }
-        }
-
-        printf("Fin de la sauvegarde\n");
-    }
-    fclose(fichier);
+    return cpt;
 }
