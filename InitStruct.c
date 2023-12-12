@@ -1,14 +1,16 @@
-#include "includeGlobal.h"
-#include "Stuctures.h"
-#include "moteur.h"
 #include "BDD.h"
-#include "InitStruct.h"
+#include "initStruct.h"
+#include "moteur.h"
+#include "Structures.h"
+#include "includeGlobal.h"
 
-void init(Parking **p, Piste **pi, Taxis **t)
+
+void init(Parking **p, Piste **pi, Taxis **t, EnVol **e)
 {
     initParking(p);
     initPiste(pi);
     initTaxis(t);
+    initEnVol(e);
 }
 
 void initTaxis(Taxis **t)
@@ -16,57 +18,42 @@ void initTaxis(Taxis **t)
     int capG = 3;
     int capM = 5;
     int capP = 7;
-    for (int i = 0; i < 3; i++)
-    {
-        Taxis *new = malloc(sizeof(Taxis));
-        new->numero = i + 1;
-        switch (i)
-        {
-        case 0:
-            new->capacite = capG;
-            break;
-
-        case 1:
-            new->capacite = capM;
-            break;
-
-        case 2:
-            new->capacite = capP;
-            break;
-
-        default:
-            break;
-        }
-        new->nbAvions = 0;
-        new->premier = NULL;
-        new->suivant = *t;
-        *t = new;
-    }
+    Taxis *new = malloc(sizeof(Taxis));
+    new->capaciteG = capG;
+    new->capaciteM = capM;
+    new->capaciteP = capP;
+    new->premierG = NULL;
+    new->premierM = NULL;
+    new->premierP = NULL;
+    *t = new;
 }
 
 void initPiste(Piste **p)
 {
-    for (int i = 0; i < 3; i++)
-    {
-        Piste *new = malloc(sizeof(Piste));
-        new->numero = i + 1;
-        new->premier = NULL;
-        new->suivant = *p;
-    }
+    Piste *new = malloc(sizeof(Piste));
+    new->premierG = NULL;
+    new->premierM = NULL;
+    new->premierP = NULL;
+    *p = new;
 }
 
 void initParking(Parking **p)
 {
     int cap = 7;
+    Parking *new = malloc(sizeof(Parking));
+    new->capacite = cap;
+    new->premierG = NULL;
+    new->premierM = NULL;
+    new->premierP = NULL;
+    *p = new;
+}
 
-    for (int i = 0; i < 3; i++)
-    {
-        Parking *new = malloc(sizeof(Parking));
-        new->numero = i + 1;
-        new->capacite = cap;
-        new->nbAvions = 0;
-        new->premier = NULL;
-        new->suivant = *p;
-        *p = new;
-    }
+void initEnVol(EnVol **e)
+{
+    EnVol *new = malloc(sizeof(EnVol));
+    new->nbAvions = 0;
+    new->premierG = NULL;
+    new->premierM = NULL;
+    new->premierP = NULL;
+    *e = new;
 }
