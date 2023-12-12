@@ -1,298 +1,304 @@
-#include "includeGlobal.h"
-#include "Stuctures.h"
-#include "moteur.h"
 #include "BDD.h"
-#include "InitStruct.h"
-#include "affichage.h"
+#include "initStruct.h"
+#include "Structures.h"
+#include "includeGlobal.h"
 
-void fromParkingToTaxis(Parking **p, Taxis **t, Avion *a, int categorie)
+void atterissage(EnVol **e, Piste **pi, Parking *p, int categorie, int timeG, int id)
 {
-    while ((*t)->numero != categorie)
+    if (id != 0)
     {
-        *t = (*t)->suivant;
-    }
-
-    if ((*t)->nbAvions < (*t)->capacite)
-    {
-        (*t)->nbAvions++;
-        while ((*p)->numero != categorie)
-        {
-            *p = (*p)->suivant;
-        }
-        ajouteEnFin(&(*t)->premier, a);
-        supprimeAvion(&(*p)->premier, a->identifiant);
-        (*p)->nbAvions--;
-    }
-}
-
-void testParkingToTaxis(Parking **p, Taxis **t, int timeG)
-{
-    for (int i = 1; i < 4; i++)
-    {
-        Avion *actuel = malloc(sizeof(*actuel));
-        actuel = rechercheParTempsParking(*p, i, timeG);
-        if (actuel != NULL)
-        {
-            fromParkingToTaxis(p, t, actuel, i);
-        }
-    }
-}
-
-//___________________________________________________________________________________________
-
-void fromTaxisToPiste(Taxis **t, Piste **p, int categorie)
-{
-    if ((*t)->premier == NULL)
-    {
-        return;
-    }
-
-    while ((*p)->numero != categorie)
-    {
-        *p = (*p)->suivant;
-    }
-    while ((*t)->numero != categorie)
-    {
-        *t = (*t)->suivant;
-    }
-
-    if ((*p)->premier == NULL && (*t)->nbAvions < (*t)->capacite && (*t)->premier != NULL)
-    {
-        ajouteEnFin(&(*p)->premier, (*t)->premier);
-        supprimeEnTete(&(*t)->premier);
-        (*t)->nbAvions--;
-    }
-}
-
-void testTaxisToPiste(Taxis **t, Piste **p)
-{
-    for (int i = 1; i < 4; i++)
-    {
-        if ((*t)->premier != NULL)
-        {
-            fromTaxisToPiste(t, p, i);
-        }
-    }
-}
-
-//___________________________________________________________________________________________
-
-void decollage(Piste **p, EnVol **e, int categorie, int timeG)
-{
-    Piste *actuel = malloc(sizeof(*actuel));
-    actuel = *p;
-    while (actuel->numero != categorie && actuel->suivant != NULL)
-    {
-        actuel = actuel->suivant;
-    }
-    if (actuel->premier != NULL)
-    {
-        actuel->premier->time = timeG + 20;
         switch (categorie)
         {
         case 1:
-            ajouteEnFin(&(*e)->premierG, actuel->premier);
-            supprimeAvion(&(*p)->premier, actuel->premier->identifiant);
-            (*e)->nbAvions++;
+            if (p->capacite > compteAvion(p->premierG))
+            {
+                ajouteEnFinParId(&p->premierG, (*e)->premierG, timeG, id);
+                supprimeAvion(&(*e)->premierG, id);
+                printf("AvionG vient d'atterir\n");
+                (*e)->nbAvions--;
+            }
             break;
-
         case 2:
-            ajouteEnFin(&(*e)->premierM, actuel->premier);
-            supprimeAvion(&(*p)->premier, actuel->premier->identifiant);
-            (*e)->nbAvions++;
+            if (p->capacite > compteAvion(p->premierM))
+            {
+                ajouteEnFinParId(&p->premierM, (*e)->premierM, timeG, id);
+                supprimeAvion(&(*e)->premierM, id);
+                printf("AvionM vient d'atterir\n");
+                (*e)->nbAvions--;
+            }
             break;
-
         case 3:
-            ajouteEnFin(&(*e)->premierP, actuel->premier);
-            supprimeAvion(&(*p)->premier, actuel->premier->identifiant);
-            (*e)->nbAvions++;
-
+            if (p->capacite > compteAvion(p->premierP))
+            {
+                ajouteEnFinParId(&p->premierP, (*e)->premierP, timeG, id);
+                supprimeAvion(&(*e)->premierP, id);
+                printf("AvionP vient d'atterir\n");
+                (*e)->nbAvions--;
+            }
             break;
-
         default:
             break;
         }
     }
 }
 
-int testDecollage(Piste **p, EnVol **e, int timeG)
+void testAtterissage(EnVol **e, Piste **pi, Parking *p, int timeG)
 {
-    for (int i = 1; i < 4; i++)
+    for (int i = 0; i < 3; i++)
     {
-        decollage(p, e, i, timeG);
-    }
-    return 0;
-}
-
-//___________________________________________________________________________________________
-
-void atterissage(Piste **p, EnVol **e, Avion *a, int categorie)
-{
-    while ((*p)->numero != categorie)
-    {
-        *p = (*p)->suivant;
-    }
-
-    switch (categorie)
-    {
-    case 1:
-        ajouteEnFin(&(*p)->premier, a);
-        supprimeAvion(&(*e)->premierG, a->identifiant);
-        (*e)->nbAvions--;
-        break;
-
-    case 2:
-        ajouteEnFin(&(*p)->premier, a);
-        supprimeAvion(&(*e)->premierM, a->identifiant);
-        (*e)->nbAvions--;
-        break;
-
-    case 3:
-        ajouteEnFin(&(*p)->premier, a);
-        supprimeAvion(&(*e)->premierP, a->identifiant);
-        (*e)->nbAvions--;
-        break;
-
-    default:
-        break;
-    }
-}
-
-void testAtterissage(Parking **p, Piste **pi, EnVol **e, int timeG)
-{
-
-    for (int i = 1; i < 4; i++)
-    {
-        Avion *actuel = malloc(sizeof(*actuel));
+        int *time = malloc(sizeof(int));
         switch (i)
         {
-        case 1:
+        case 0:
             if ((*e)->premierG != NULL)
             {
-                actuel = rechercheParTempsEnVol(*e, i, timeG);
+                int id = rechercheParTemps((*e)->premierG, timeG, &time);
+                if (*time <= timeG && id != 0)
+                {
+                    atterissage(e, pi, p, 1, timeG, id);
+                }
             }
             break;
-        
-        case 2:
+        case 1:
             if ((*e)->premierM != NULL)
             {
-                actuel = rechercheParTempsEnVol(*e, i, timeG);
+                int id = rechercheParTemps((*e)->premierM, timeG, &time);
+                if (*time <= timeG && id != 0)
+                {
+                    atterissage(e, pi, p, 2, timeG, id);
+                }
             }
             break;
-
-        case 3:
+        case 2:
             if ((*e)->premierP != NULL)
             {
-                actuel = rechercheParTempsEnVol(*e, i, timeG);
+                int id = rechercheParTemps((*e)->premierP, timeG, &time);
+                if (*time <= timeG && id != 0)
+                {
+                    atterissage(e, pi, p, 3, timeG, id);
+                }
             }
             break;
-
         default:
             break;
-        }
-        if (actuel != NULL)
-        {
-            if (((*p)->nbAvions < (*p)->capacite) && (*pi)->premier == NULL )
-            {
-                atterissage(pi, e, actuel, i);
-            }
         }
     }
 }
 
-//___________________________________________________________________________________________
+//_______________________________________________________________________________________________________________________//
 
-void fromPisteToParking(Piste **p, Parking **park, int categorie, int timeG)
+void decollage(Piste **pi, EnVol **e, int timeG)
 {
-    Piste *actuel = malloc(sizeof(*actuel));
-    actuel = *p;
-    while (actuel->numero != categorie)
+    for (int i = 0; i < 3; i++)
     {
-        actuel = actuel->suivant;
-    }
-    if (actuel->premier != NULL)
-    {
-        actuel->premier->time = timeG + 20;
-        if ((*park)->nbAvions < (*park)->capacite)
+        switch (i)
         {
-            Parking *actuel2 = malloc(sizeof(*actuel2));
-            actuel2 = *park;
-            while (actuel2->numero != categorie)
+        case 0:
+            if ((*pi)->premierG != NULL)
             {
-                actuel2 = actuel2->suivant;
+                (*pi)->premierG->time = timeG + ATTENTE;
+                ajouteEnFin(&(*e)->premierG, (*pi)->premierG);
+                supprimeEnTete(&(*pi)->premierG);
+                printf("AvionG qui passe en vol\n");
+                (*e)->nbAvions++;
             }
-            ajouteEnFin(&actuel2->premier, actuel->premier);
-            supprimeEnTete(&actuel->premier);
-            actuel2->nbAvions++;
-            *p = actuel;
-            *park = actuel2;
+            break;
+        case 1:
+            if ((*pi)->premierM != NULL)
+            {
+                (*pi)->premierM->time = timeG + ATTENTE;
+                ajouteEnFin(&(*e)->premierM, (*pi)->premierM);
+                supprimeEnTete(&(*pi)->premierM);
+                printf("AvionM qui passe en vol\n");
+                (*e)->nbAvions++;
+            }
+            break;
+        case 2:
+            if ((*pi)->premierP != NULL)
+            {
+                (*pi)->premierP->time = timeG + ATTENTE;
+                ajouteEnFin(&(*e)->premierP, (*pi)->premierP);
+                supprimeEnTete(&(*pi)->premierP);
+                printf("AvionP qui passe en vol\n");
+                (*e)->nbAvions++;
+            }
+            break;
+        default:
+            break;
         }
     }
 }
 
-//___________________________________________________________________________________________
+//_______________________________________________________________________________________________________________________//
 
-void boucleMoteur(Parking **p, Taxis **t, Piste **pi, EnVol **e, int timeG)
+void fromParkingToTaxis(Parking **p, Taxis **t, int timeG, int categorie, int id)
 {
-    testParkingToTaxis(p, t, timeG);
-    testTaxisToPiste(t, pi);
-    testDecollage(pi, e, timeG);
-    testAtterissage(p, pi, e, timeG);
-    for (int i = 1; i < 4; i++)
+    if (id != 0)
     {
-        fromPisteToParking(pi, p, i, timeG);
-    }
-    int nbAvionPG = 0;
-    int nbAvionPM = 0;
-    int nbAvionPP = 0;
-    int nbAvionTG = 0;
-    int nbAvionTM = 0;
-    int nbAvionTP = 0;
-    for (int i = 1; i < 4; i++)
-    {
-        switch (i)
+        switch (categorie)
         {
         case 1:
-            nbAvionPG = (*p)->nbAvions;
+            if ((*t)->capaciteG > compteAvion((*t)->premierG))
+            {
+                ajouteEnFinParId(&(*t)->premierG, (*p)->premierG, timeG, id);
+                supprimeAvion(&(*p)->premierG, id);
+                printf("AvionG qui passe au Taxis\n");
+            }
             break;
-
         case 2:
-            nbAvionPM = (*p)->nbAvions;
+            if ((*t)->capaciteM > compteAvion((*t)->premierM))
+            {
+                ajouteEnFinParId(&(*t)->premierM, (*p)->premierM, timeG, id);
+                supprimeAvion(&(*p)->premierM, id);
+                printf("AvionM qui passe au Taxis\n");
+            }
             break;
-
         case 3:
-            nbAvionPP = (*p)->nbAvions;
+            if ((*t)->capaciteP > compteAvion((*t)->premierP))
+            {
+                ajouteEnFinParId(&(*t)->premierP, (*p)->premierP, timeG, id);
+                supprimeAvion(&(*p)->premierP, id);
+                printf("AvionP qui passe au Taxis\n");
+            }
             break;
         default:
             break;
         }
     }
+}
 
-    for (int i = 1; i < 4; i++)
+void testFromParkingToTaxis(Parking **p, Taxis **t, int timeG)
+{
+    for (int i = 0; i < 3; i++)
     {
+        int *time = malloc(sizeof(int));
         switch (i)
         {
+        case 0:
+            if ((*p)->premierG != NULL)
+            {
+                int id = rechercheParTemps((*p)->premierG, timeG, &time);
+                if (*time <= timeG && id != 0)
+                {
+                    fromParkingToTaxis(p, t, timeG, 1, id);
+                }
+            }
+            break;
         case 1:
-            nbAvionTG = (*t)->nbAvions;
+            if ((*p)->premierM != NULL)
+            {
+                int id = rechercheParTemps((*p)->premierM, timeG, &time);
+                if (*time <= timeG && id != 0)
+                {
+                    fromParkingToTaxis(p, t, timeG, 2, id);
+                }
+            }
             break;
-
         case 2:
-            nbAvionTM = (*t)->nbAvions;
-            break;
-
-        case 3:
-            nbAvionTP = (*t)->nbAvions;
+            if ((*p)->premierP != NULL)
+            {
+                int id = rechercheParTemps((*p)->premierP, timeG, &time);
+                if (*time <= timeG && id != 0)
+                {
+                    fromParkingToTaxis(p, t, timeG, 3, id);
+                }
+            }
             break;
         default:
             break;
         }
     }
+}
 
-    dessinAeroport(nbAvionPG, nbAvionPM, nbAvionPP, nbAvionTG, nbAvionTM, nbAvionTP);
+//_______________________________________________________________________________________________________________________//
 
-    sleep(1);
-    // if (timeG%20 == 0)
-    // {
-    //     sauvegardeBdd(*e, *p, *t, *pi, timeG);
-    // }
+void fromTaxisToPiste(Taxis **t, Piste **pi)
+{
+    for (int i = 0; i < 3; i++)
+    {
+        switch (i)
+        {
+        case 0:
+            if ((*t)->premierG != NULL && (*pi)->premierG == NULL)
+            {
+                ajouteEnFin(&(*pi)->premierG, (*t)->premierG);
+                supprimeEnTete(&(*t)->premierG);
+                printf("AvionG qui passe en piste pour décoller\n");
+            }
+            break;
+        case 1:
+            if ((*t)->premierM != NULL && (*pi)->premierM == NULL)
+            {
+                ajouteEnFin(&(*pi)->premierM, (*t)->premierM);
+                supprimeEnTete(&(*t)->premierM);
+                printf("AvionM qui passe en piste pour décoller\n");
+            }
+            break;
+        case 2:
+            if ((*t)->premierP != NULL && (*pi)->premierP == NULL)
+            {
+                ajouteEnFin(&(*pi)->premierP, (*t)->premierP);
+                supprimeEnTete(&(*t)->premierP);
+                printf("AvionP qui passe en piste pour décoller\n");
+            }
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+//_______________________________________________________________________________________________________________________//
+
+void fromPisteToParking(Piste **pi, Parking **p, int timeG)
+{
+    for (int i = 0; i < 3; i++)
+    {
+        switch (i)
+        {
+        case 0:
+            if ((*pi)->premierG != NULL)
+            {
+                (*pi)->premierG->time = timeG + ATTENTE;
+                ajouteEnFin(&(*p)->premierG, (*pi)->premierG);
+                supprimeEnTete(&(*pi)->premierG);
+                printf("AvionG qui passe au Parking\n");
+            }
+            break;
+        case 1:
+            if ((*pi)->premierM != NULL)
+            {
+                (*pi)->premierM->time = timeG + ATTENTE;
+                ajouteEnFin(&(*p)->premierM, (*pi)->premierM);
+                supprimeEnTete(&(*pi)->premierM);
+                printf("AvionM qui passe au Parking\n");
+            }
+            break;
+        case 2:
+            if ((*pi)->premierP != NULL)
+            {
+                (*pi)->premierP->time = timeG + ATTENTE;
+                ajouteEnFin(&(*p)->premierP, (*pi)->premierP);
+                supprimeEnTete(&(*pi)->premierP);
+                printf("AvionP qui passe au Parking\n");
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    
+}
+
+//_______________________________________________________________________________________________________________________//
+
+void boucleMoteur(EnVol **e, Piste **pi, Parking **p, Taxis **t, int timeG)
+{
+    decollage(pi, e, timeG);
+    fromTaxisToPiste(t, pi);
+    testAtterissage(e, pi, *p, timeG);
+    fromPisteToParking(pi, p, timeG);
+    testFromParkingToTaxis(p, t, timeG);
+    
+    
 }
