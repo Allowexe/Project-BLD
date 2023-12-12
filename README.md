@@ -7,3 +7,6 @@
 - A plane, depending of it's category, will be able to land on the corresponding runway, and only on this one.
 - The database should be composed of at least 50 differents data. We were free of creating a database generation system.
 - No graphical library should be used.
+
+##### Overall, what did we managed to do ?
+- Incoming...
