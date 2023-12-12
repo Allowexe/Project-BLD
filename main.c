@@ -3,6 +3,7 @@
 #include "moteur.h"
 #include "Structures.h"
 #include "includeGlobal.h"
+#include "affichage.h"
 
 int main(int argc, char const *argv[])
 {
