@@ -12,28 +12,25 @@ void atterissage(EnVol **e, Piste **pi, Parking *p, int categorie, int timeG, in
         case 1:
             if (p->capacite > compteAvion(p->premierG))
             {
-                ajouteEnFinParId(&p->premierG, (*e)->premierG, timeG, id);
+                ajouteEnFinParId(&(*pi)->premierG, (*e)->premierG, timeG, id);
                 supprimeAvion(&(*e)->premierG, id);
                 printf("AvionG vient d'atterir\n");
-                (*e)->nbAvions--;
             }
             break;
         case 2:
             if (p->capacite > compteAvion(p->premierM))
             {
-                ajouteEnFinParId(&p->premierM, (*e)->premierM, timeG, id);
+                ajouteEnFinParId(&(*pi)->premierM, (*e)->premierM, timeG, id);
                 supprimeAvion(&(*e)->premierM, id);
                 printf("AvionM vient d'atterir\n");
-                (*e)->nbAvions--;
             }
             break;
         case 3:
             if (p->capacite > compteAvion(p->premierP))
             {
-                ajouteEnFinParId(&p->premierP, (*e)->premierP, timeG, id);
+                ajouteEnFinParId(&(*pi)->premierP, (*e)->premierP, timeG, id);
                 supprimeAvion(&(*e)->premierP, id);
                 printf("AvionP vient d'atterir\n");
-                (*e)->nbAvions--;
             }
             break;
         default:
@@ -53,7 +50,7 @@ void testAtterissage(EnVol **e, Piste **pi, Parking *p, int timeG)
             if ((*e)->premierG != NULL)
             {
                 int id = rechercheParTemps((*e)->premierG, timeG, &time);
-                if (*time <= timeG && id != 0)
+                if (*time <= timeG && id != 0 && (*pi)->premierG == NULL)
                 {
                     atterissage(e, pi, p, 1, timeG, id);
                 }
@@ -63,7 +60,7 @@ void testAtterissage(EnVol **e, Piste **pi, Parking *p, int timeG)
             if ((*e)->premierM != NULL)
             {
                 int id = rechercheParTemps((*e)->premierM, timeG, &time);
-                if (*time <= timeG && id != 0)
+                if (*time <= timeG && id != 0 && (*pi)->premierM == NULL)
                 {
                     atterissage(e, pi, p, 2, timeG, id);
                 }
@@ -73,7 +70,7 @@ void testAtterissage(EnVol **e, Piste **pi, Parking *p, int timeG)
             if ((*e)->premierP != NULL)
             {
                 int id = rechercheParTemps((*e)->premierP, timeG, &time);
-                if (*time <= timeG && id != 0)
+                if (*time <= timeG && id != 0 && (*pi)->premierP == NULL)
                 {
                     atterissage(e, pi, p, 3, timeG, id);
                 }
@@ -100,7 +97,6 @@ void decollage(Piste **pi, EnVol **e, int timeG)
                 ajouteEnFin(&(*e)->premierG, (*pi)->premierG);
                 supprimeEnTete(&(*pi)->premierG);
                 printf("AvionG qui passe en vol\n");
-                (*e)->nbAvions++;
             }
             break;
         case 1:
@@ -110,7 +106,6 @@ void decollage(Piste **pi, EnVol **e, int timeG)
                 ajouteEnFin(&(*e)->premierM, (*pi)->premierM);
                 supprimeEnTete(&(*pi)->premierM);
                 printf("AvionM qui passe en vol\n");
-                (*e)->nbAvions++;
             }
             break;
         case 2:
@@ -120,7 +115,6 @@ void decollage(Piste **pi, EnVol **e, int timeG)
                 ajouteEnFin(&(*e)->premierP, (*pi)->premierP);
                 supprimeEnTete(&(*pi)->premierP);
                 printf("AvionP qui passe en vol\n");
-                (*e)->nbAvions++;
             }
             break;
         default:
@@ -294,11 +288,10 @@ void fromPisteToParking(Piste **pi, Parking **p, int timeG)
 
 void boucleMoteur(EnVol **e, Piste **pi, Parking **p, Taxis **t, int timeG)
 {
-    decollage(pi, e, timeG);
-    fromTaxisToPiste(t, pi);
-    testAtterissage(e, pi, *p, timeG);
+    (*e)->nbAvions = compteAvion((*e)->premierG) + compteAvion((*e)->premierM) + compteAvion((*e)->premierP);
     fromPisteToParking(pi, p, timeG);
+    fromTaxisToPiste(t, pi);
+    decollage(pi, e, timeG);
+    testAtterissage(e, pi, *p, timeG);
     testFromParkingToTaxis(p, t, timeG);
-    
-    
 }
