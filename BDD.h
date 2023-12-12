@@ -1,23 +1,19 @@
 #ifndef BDD_H
 #define BDD_H
 
-#include "includeGlobal.h"
-#include "Stuctures.h"
-#include "moteur.h"
 #include "BDD.h"
-#include "InitStruct.h"
+#include "initStruct.h"
+#include "moteur.h"
+#include "Structures.h"
+#include "includeGlobal.h"
 
 void InitialisationBdd();
 void AssgnBdd(EnVol **e, Parking **p);
 void ajouteEnFin(Avion **a, Avion *nouveau);
+void ajouteEnFinParId(Avion **nouveau, Avion *Ancien, int timeG, int id);
 void supprimeEnTete(Avion **a);
-Avion *rechercheParTempsEnVol(EnVol *e, int categorie, int timeP);
-Avion *rechercheParTempsParking(Parking *e, int categorie, int timeG);
+int rechercheParTemps(Avion *Ancien, int timeG, int **timeA);
 void supprimeAvion(Avion **a, int id);
-void printAllAvion(Avion *a);
-void sauvegardeBdd(EnVol *e, Parking *p, Taxis *t, Piste *pi, int timeG);
+int compteAvion(Avion *a);
 
-
-
-
-#endif
+#endif // BDD_H
