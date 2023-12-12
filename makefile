@@ -23,7 +23,3 @@ clean:
 	rm -f *.o
 	rm -f mainclean:p
 	rm -f *.o clean main
-
-dpClean:
-	rm -f *.o
-	rm main
