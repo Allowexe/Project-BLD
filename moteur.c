@@ -3,6 +3,7 @@
 #include "moteur.h"
 #include "BDD.h"
 #include "InitStruct.h"
+#include "affichage.h"
 
 void fromParkingToTaxis(Parking **p, Taxis **t, Avion *a, int categorie)
 {
@@ -67,7 +68,7 @@ void testTaxisToPiste(Taxis **t, Piste **p)
 {
     for (int i = 1; i < 4; i++)
     {
-        if ((*t)->premier == NULL)
+        if ((*t)->premier != NULL)
         {
             fromTaxisToPiste(t, p, i);
         }
@@ -80,7 +81,7 @@ void decollage(Piste **p, EnVol **e, int categorie, int timeG)
 {
     Piste *actuel = malloc(sizeof(*actuel));
     actuel = *p;
-    while (actuel->numero != categorie)
+    while (actuel->numero != categorie && actuel->suivant != NULL)
     {
         actuel = actuel->suivant;
     }
@@ -142,13 +143,13 @@ void atterissage(Piste **p, EnVol **e, Avion *a, int categorie)
 
     case 2:
         ajouteEnFin(&(*p)->premier, a);
-        supprimeAvion(&(*e)->premierG, a->identifiant);
+        supprimeAvion(&(*e)->premierM, a->identifiant);
         (*e)->nbAvions--;
         break;
 
     case 3:
         ajouteEnFin(&(*p)->premier, a);
-        supprimeAvion(&(*e)->premierG, a->identifiant);
+        supprimeAvion(&(*e)->premierP, a->identifiant);
         (*e)->nbAvions--;
         break;
 
@@ -159,13 +160,39 @@ void atterissage(Piste **p, EnVol **e, Avion *a, int categorie)
 
 void testAtterissage(Parking **p, Piste **pi, EnVol **e, int timeG)
 {
-    if (((*p)->nbAvions < (*p)->capacite) && (*pi)->premier != NULL)
+
+    for (int i = 1; i < 4; i++)
     {
-        for (int i = 1; i < 4; i++)
+        Avion *actuel = malloc(sizeof(*actuel));
+        switch (i)
         {
-            Avion *actuel = malloc(sizeof(*actuel));
-            actuel = rechercheParTempsEnVol(*e, i, timeG);
-            if (actuel != NULL)
+        case 1:
+            if ((*e)->premierG != NULL)
+            {
+                actuel = rechercheParTempsEnVol(*e, i, timeG);
+            }
+            break;
+        
+        case 2:
+            if ((*e)->premierM != NULL)
+            {
+                actuel = rechercheParTempsEnVol(*e, i, timeG);
+            }
+            break;
+
+        case 3:
+            if ((*e)->premierP != NULL)
+            {
+                actuel = rechercheParTempsEnVol(*e, i, timeG);
+            }
+            break;
+
+        default:
+            break;
+        }
+        if (actuel != NULL)
+        {
+            if (((*p)->nbAvions < (*p)->capacite) && (*pi)->premier == NULL )
             {
                 atterissage(pi, e, actuel, i);
             }
@@ -215,5 +242,57 @@ void boucleMoteur(Parking **p, Taxis **t, Piste **pi, EnVol **e, int timeG)
     {
         fromPisteToParking(pi, p, i, timeG);
     }
-    sauvegardeBdd(*e, *p, *t, *pi, timeG);
+    int nbAvionPG = 0;
+    int nbAvionPM = 0;
+    int nbAvionPP = 0;
+    int nbAvionTG = 0;
+    int nbAvionTM = 0;
+    int nbAvionTP = 0;
+    for (int i = 1; i < 4; i++)
+    {
+        switch (i)
+        {
+        case 1:
+            nbAvionPG = (*p)->nbAvions;
+            break;
+
+        case 2:
+            nbAvionPM = (*p)->nbAvions;
+            break;
+
+        case 3:
+            nbAvionPP = (*p)->nbAvions;
+            break;
+        default:
+            break;
+        }
+    }
+
+    for (int i = 1; i < 4; i++)
+    {
+        switch (i)
+        {
+        case 1:
+            nbAvionTG = (*t)->nbAvions;
+            break;
+
+        case 2:
+            nbAvionTM = (*t)->nbAvions;
+            break;
+
+        case 3:
+            nbAvionTP = (*t)->nbAvions;
+            break;
+        default:
+            break;
+        }
+    }
+
+    dessinAeroport(nbAvionPG, nbAvionPM, nbAvionPP, nbAvionTG, nbAvionTM, nbAvionTP);
+
+    sleep(1);
+    // if (timeG%20 == 0)
+    // {
+    //     sauvegardeBdd(*e, *p, *t, *pi, timeG);
+    // }
 }
