@@ -295,3 +295,21 @@ void animBegining()
         usleep(30000);
     }
 }
+
+int menu()
+{
+    int choix = 0;
+    while (choix < 1 || choix > 3)
+    {
+        system("clear");
+        printf("____________________________________________________\n");
+        printf("1. Charger une nouvelle base de donnée aléatoire\n");
+        printf("2. Charger la base de donnée déjà existante\n");
+        printf("3. Quitter\n");
+        printf("____________________________________________________\n");
+        printf("Votre choix: ");
+        scanf("%d", &choix);
+    }
+    system("clear");
+    return choix;
+}
