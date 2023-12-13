@@ -2,6 +2,7 @@
 #include "initStruct.h"
 #include "Structures.h"
 #include "includeGlobal.h"
+#include "affichage.h"
 
 void atterissage(EnVol **e, Piste **pi, Parking *p, int categorie, int timeG, int id)
 {
@@ -293,17 +294,14 @@ void fromPisteToParking(Piste **pi, Parking **p, int timeG)
 
 void boucleMoteur(EnVol **e, Piste **pi, Parking **p, Taxis **t, int currentTime, int startTime)
 {
-    
     int timeG;
     int tpm;
 
     while (1)
     {
         currentTime = time(NULL);
-        timeG =currentTime - startTime;
-        printf("Temps écoulé : %d secondes\n", timeG);
+        timeG = currentTime - startTime;
         (*e)->nbAvions = compteAvion((*e)->premierG) + compteAvion((*e)->premierM) + compteAvion((*e)->premierP);
-        
         if (tpm == 0)
         {
             testFromParkingToTaxis(p, t, timeG);
@@ -315,8 +313,10 @@ void boucleMoteur(EnVol **e, Piste **pi, Parking **p, Taxis **t, int currentTime
             fromPisteToParking(pi, p, timeG);
             fromTaxisToPiste(t, pi);
         }
-        usleep(500000);
-        tpm = (tpm + 1)%2;
+        dessinAeroport(compteAvion((*p)->premierG), compteAvion((*p)->premierM), compteAvion((*p)->premierP), compteAvion((*t)->premierG), compteAvion((*t)->premierM), compteAvion((*t)->premierP), compteAvion((*pi)->premierG), compteAvion((*pi)->premierM), compteAvion((*pi)->premierP));
+
+        usleep(250000);
+        tpm = (tpm + 1) % 2;
         system("clear");
     }
 }
