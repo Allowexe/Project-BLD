@@ -3,7 +3,6 @@
 #include "moteur.h"
 #include "Structures.h"
 #include "includeGlobal.h"
-#include "affichage.h"
 
 int main(int argc, char const *argv[])
 {
@@ -16,16 +15,6 @@ int main(int argc, char const *argv[])
     time_t startTime = time(NULL);
     time_t currentTime;
     AssgnBdd(&e, &p);
-    animBegining();
-    sleep(1.5);
-    system("clear");
-    while (1)
-    {
-        currentTime = time(NULL) - startTime;
-        boucleMoteur(&e, &pi, &p, &t, currentTime);
-        dessinAeroport(compteAvion(p->premierG), compteAvion(p->premierM), compteAvion(p->premierP), compteAvion(t->premierG), compteAvion(t->premierM), compteAvion(t->premierP), compteAvion(pi->premierG), compteAvion(pi->premierM), compteAvion(pi->premierP));
-        system("clear");
-    }
-
+    boucleMoteur(&e, &pi, &p, &t, currentTime, startTime);
     return 0;
 }
