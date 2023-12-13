@@ -2,7 +2,7 @@
 #define BDD_H
 
 #include "BDD.h"
-#include "initStruct.h"
+#include "InitStruct.h"
 #include "moteur.h"
 #include "Structures.h"
 #include "includeGlobal.h"
