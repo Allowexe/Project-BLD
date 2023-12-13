@@ -91,27 +91,30 @@ void decollage(Piste **pi, EnVol **e, int timeG)
         switch (i)
         {
         case 0:
-            if ((*pi)->premierG != NULL)
+            if ((*pi)->premierG != NULL && (*pi)->premierG->decolage == true)
             {
-                (*pi)->premierG->time = timeG + ATTENTE;
+                (*pi)->premierG->time = timeG + rand() % ATTENTE_S + 10;
+                (*pi)->premierG->decolage = false;
                 ajouteEnFin(&(*e)->premierG, (*pi)->premierG);
                 supprimeEnTete(&(*pi)->premierG);
                 printf("AvionG qui passe en vol\n");
             }
             break;
         case 1:
-            if ((*pi)->premierM != NULL)
+            if ((*pi)->premierM != NULL && (*pi)->premierM->decolage == true)
             {
-                (*pi)->premierM->time = timeG + ATTENTE;
+                (*pi)->premierM->time = timeG + rand() % ATTENTE_S + 10;
+                (*pi)->premierM->decolage = false;
                 ajouteEnFin(&(*e)->premierM, (*pi)->premierM);
                 supprimeEnTete(&(*pi)->premierM);
                 printf("AvionM qui passe en vol\n");
             }
             break;
         case 2:
-            if ((*pi)->premierP != NULL)
+            if ((*pi)->premierP != NULL && (*pi)->premierP->decolage == true)
             {
-                (*pi)->premierP->time = timeG + ATTENTE;
+                (*pi)->premierP->time = timeG + rand() % ATTENTE_S + 10;
+                (*pi)->premierP->decolage = false;
                 ajouteEnFin(&(*e)->premierP, (*pi)->premierP);
                 supprimeEnTete(&(*pi)->premierP);
                 printf("AvionP qui passe en vol\n");
@@ -215,6 +218,7 @@ void fromTaxisToPiste(Taxis **t, Piste **pi)
         case 0:
             if ((*t)->premierG != NULL && (*pi)->premierG == NULL)
             {
+                (*t)->premierG->decolage = true;
                 ajouteEnFin(&(*pi)->premierG, (*t)->premierG);
                 supprimeEnTete(&(*t)->premierG);
                 printf("AvionG qui passe en piste pour décoller\n");
@@ -223,6 +227,7 @@ void fromTaxisToPiste(Taxis **t, Piste **pi)
         case 1:
             if ((*t)->premierM != NULL && (*pi)->premierM == NULL)
             {
+                (*t)->premierM->decolage = true;
                 ajouteEnFin(&(*pi)->premierM, (*t)->premierM);
                 supprimeEnTete(&(*t)->premierM);
                 printf("AvionM qui passe en piste pour décoller\n");
@@ -231,6 +236,7 @@ void fromTaxisToPiste(Taxis **t, Piste **pi)
         case 2:
             if ((*t)->premierP != NULL && (*pi)->premierP == NULL)
             {
+                (*t)->premierP->decolage = true;
                 ajouteEnFin(&(*pi)->premierP, (*t)->premierP);
                 supprimeEnTete(&(*t)->premierP);
                 printf("AvionP qui passe en piste pour décoller\n");
@@ -251,27 +257,27 @@ void fromPisteToParking(Piste **pi, Parking **p, int timeG)
         switch (i)
         {
         case 0:
-            if ((*pi)->premierG != NULL)
+            if ((*pi)->premierG != NULL && (*pi)->premierG->decolage == false)
             {
-                (*pi)->premierG->time = timeG + ATTENTE;
+                (*pi)->premierG->time = timeG + rand() % ATTENTE_S + 5;
                 ajouteEnFin(&(*p)->premierG, (*pi)->premierG);
                 supprimeEnTete(&(*pi)->premierG);
                 printf("AvionG qui passe au Parking\n");
             }
             break;
         case 1:
-            if ((*pi)->premierM != NULL)
+            if ((*pi)->premierM != NULL && (*pi)->premierM->decolage == false)
             {
-                (*pi)->premierM->time = timeG + ATTENTE;
+                (*pi)->premierM->time = timeG + rand() % ATTENTE_S + 5;
                 ajouteEnFin(&(*p)->premierM, (*pi)->premierM);
                 supprimeEnTete(&(*pi)->premierM);
                 printf("AvionM qui passe au Parking\n");
             }
             break;
         case 2:
-            if ((*pi)->premierP != NULL)
+            if ((*pi)->premierP != NULL && (*pi)->premierP->decolage == false)
             {
-                (*pi)->premierP->time = timeG + ATTENTE;
+                (*pi)->premierP->time = timeG + rand() % ATTENTE_S + 5;
                 ajouteEnFin(&(*p)->premierP, (*pi)->premierP);
                 supprimeEnTete(&(*pi)->premierP);
                 printf("AvionP qui passe au Parking\n");
@@ -281,17 +287,36 @@ void fromPisteToParking(Piste **pi, Parking **p, int timeG)
             break;
         }
     }
-    
 }
 
 //_______________________________________________________________________________________________________________________//
 
-void boucleMoteur(EnVol **e, Piste **pi, Parking **p, Taxis **t, int timeG)
+void boucleMoteur(EnVol **e, Piste **pi, Parking **p, Taxis **t, int currentTime, int startTime)
 {
-    (*e)->nbAvions = compteAvion((*e)->premierG) + compteAvion((*e)->premierM) + compteAvion((*e)->premierP);
-    fromPisteToParking(pi, p, timeG);
-    fromTaxisToPiste(t, pi);
-    decollage(pi, e, timeG);
-    testAtterissage(e, pi, *p, timeG);
-    testFromParkingToTaxis(p, t, timeG);
+    
+    int timeG;
+    int tpm;
+
+    while (1)
+    {
+        currentTime = time(NULL);
+        timeG =currentTime - startTime;
+        printf("Temps écoulé : %d secondes\n", timeG);
+        (*e)->nbAvions = compteAvion((*e)->premierG) + compteAvion((*e)->premierM) + compteAvion((*e)->premierP);
+        
+        if (tpm == 0)
+        {
+            testFromParkingToTaxis(p, t, timeG);
+            testAtterissage(e, pi, *p, timeG);
+        }
+        if (tpm == 1)
+        {
+            decollage(pi, e, timeG);
+            fromPisteToParking(pi, p, timeG);
+            fromTaxisToPiste(t, pi);
+        }
+        usleep(500000);
+        tpm = (tpm + 1)%2;
+        system("clear");
+    }
 }
