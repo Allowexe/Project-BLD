@@ -13,6 +13,6 @@ void fromParkingToTaxis(Parking **p, Taxis **t, int timeG, int categorie, int id
 void testFromParkingToTaxis(Parking **p, Taxis **t, int timeG);
 void fromTaxisToPiste(Taxis **t, Piste **pi);
 void fromPisteToParking(Piste **pi, Parking **p, int timeG);
-void boucleMoteur(EnVol **e, Piste **pi, Parking **p, Taxis **t, int timeG);
+void boucleMoteur(EnVol **e, Piste **pi, Parking **p, Taxis **t, int currentTime, int startTime);
 
 #endif //MOTEUR_H
