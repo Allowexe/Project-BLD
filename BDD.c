@@ -98,7 +98,7 @@ void InitialisationBdd()
             default:
                 break;
             }
-            fprintf(fichier, "Temps: %d\n", (rand() % 10 + 1));
+            fprintf(fichier, "Temps: %d\n", (rand() % 5 + 1));
         }
         printf("Fin de l'initialisation\n");
         // initialisation de la BDD effectuée, fermeture du fichier
@@ -126,6 +126,7 @@ void AssgnBdd(EnVol **e, Parking **p)
         fscanf(fichier, "Etat: %d ", &new->etat);
         fscanf(fichier, "Passagers: %d ", &new->NbPassagers);
         fscanf(fichier, "Temps: %d\n", &new->time);
+        new->decolage = false;
         if (new->etat == 0)
         {
             switch (new->categorie)
@@ -203,8 +204,10 @@ void AssgnBdd(EnVol **e, Parking **p)
             }
         }
     }
+    (*e)->nbAvions = compteAvion((*e)->premierG) + compteAvion((*e)->premierM) + compteAvion((*e)->premierP);
     fclose(fichier);
 }
+
 
 void ajouteEnFin(Avion **a, Avion *nouveau)
 {
@@ -290,27 +293,33 @@ int rechercheParTemps(Avion *a, int timeG, int **timeA)
 
 void supprimeAvion(Avion **a, int id)
 {
-    Avion *actuel = *a;
-    Avion *precedent = NULL;
-    if (actuel != NULL && actuel->identifiant == id)
-    {
-        *a = actuel->suivant;
-        free(actuel);
-        return;
-    }
-    while (actuel != NULL && actuel->identifiant != id)
-    {
-        precedent = actuel;
-        actuel = actuel->suivant;
-    }
-    if (actuel == NULL)
-    {
-        return;
-    }
-    precedent->suivant = actuel->suivant;
-    free(actuel);
-}
+    Avion *temp = *a, *prev;
 
+    // If head node itself holds the key to be deleted
+    if (temp != NULL && temp->identifiant == id)
+    {
+        *a = temp->suivant; // Changed head
+        free(temp);         // free old head
+        return;
+    }
+
+    // Search for the key to be deleted, keep track of the
+    // previous node as we need to change 'prev->suivant'
+    while (temp != NULL && temp->identifiant != id)
+    {
+        prev = temp;
+        temp = temp->suivant;
+    }
+
+    // If key was not present in linked list
+    if (temp == NULL)
+        return;
+
+    // Unlink the node from linked list
+    prev->suivant = temp->suivant;
+
+    free(temp); // Free memory
+}
 
 int compteAvion(Avion *a)
 {
@@ -321,4 +330,18 @@ int compteAvion(Avion *a)
         a = a->suivant;
     }
     return cpt;
+}
+
+void printAllAvion(Avion *a)
+{
+    while (a != NULL)
+    {
+        printf("ID: %d\n", a->identifiant);
+        printf("Categorie: %d\n", a->categorie);
+        printf("Etat: %d\n", a->etat);
+        printf("Passagers: %d\n", a->NbPassagers);
+        printf("Temps: %d\n", a->time);
+        printf("\n");
+        a = a->suivant;
+    }
 }
