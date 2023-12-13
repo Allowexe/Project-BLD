@@ -1,8 +1,7 @@
 #include "BDD.h"
-#include "InitStruct.h"
+#include "initStruct.h"
 #include "Structures.h"
 #include "includeGlobal.h"
-#include "affichage.h"
 
 void atterissage(EnVol **e, Piste **pi, Parking *p, int categorie, int timeG, int id)
 {
@@ -292,16 +291,27 @@ void fromPisteToParking(Piste **pi, Parking **p, int timeG)
 
 //_______________________________________________________________________________________________________________________//
 
-void boucleMoteur(EnVol **e, Piste **pi, Parking **p, Taxis **t, int currentTime, int startTime)
-{
-    int timeG;
-    int tpm;
 
-    while (1)
+void boucleMoteur(EnVol **e, Piste **pi, Parking **p, Taxis **t)
+{
+    time_t currentTime;
+    int timeG;
+    int tpm = 0;
+    int tours = 0;
+    int toursMax;
+    system("clear");
+    printf("Combien de tours voulez-vous faire ?\n");
+    printf("Votre choix: ");
+    scanf("%d", &toursMax);
+    system("clear");
+    time_t startTime = time(NULL);
+    while (tours < toursMax)
     {
         currentTime = time(NULL);
-        timeG = currentTime - startTime;
+        timeG =currentTime - startTime;
+        printf("Temps écoulé : %d secondes\n", timeG);
         (*e)->nbAvions = compteAvion((*e)->premierG) + compteAvion((*e)->premierM) + compteAvion((*e)->premierP);
+        
         if (tpm == 0)
         {
             testFromParkingToTaxis(p, t, timeG);
@@ -314,9 +324,10 @@ void boucleMoteur(EnVol **e, Piste **pi, Parking **p, Taxis **t, int currentTime
             fromTaxisToPiste(t, pi);
         }
         dessinAeroport(compteAvion((*p)->premierG), compteAvion((*p)->premierM), compteAvion((*p)->premierP), compteAvion((*t)->premierG), compteAvion((*t)->premierM), compteAvion((*t)->premierP), compteAvion((*pi)->premierG), compteAvion((*pi)->premierM), compteAvion((*pi)->premierP));
-
         usleep(250000);
-        tpm = (tpm + 1) % 2;
+        tpm = (tpm + 1)%2;
+        tours++;
         system("clear");
     }
+    sauvegardeBdd(e, p, pi, t);
 }
