@@ -9,7 +9,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdbool.h>
 #define NB_AVION 50
-#define ATTENTE 10
+#define ATTENTE_S 5
+#define ATTENTE_V 10
 
 #endif
