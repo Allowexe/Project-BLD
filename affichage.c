@@ -292,14 +292,6 @@ void animBegining()
         printf("%s\n",buff10);
         printf("%s\n",buff11);
         printf("%s\n",buff12);
-        usleep(30000);
+        usleep(20000);
     }
 }
-
-// int main(void)
-// {
-    
-//     //dessinAeroport(5, 2, 1, 2, 4, 5, 1, 1, 1);
-//     animBegining();
-//     return 0;
-// }
