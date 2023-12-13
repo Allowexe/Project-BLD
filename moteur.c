@@ -2,6 +2,7 @@
 #include "InitStruct.h"
 #include "Structures.h"
 #include "includeGlobal.h"
+#include "affichage.h"
 
 void atterissage(EnVol **e, Piste **pi, Parking *p, int categorie, int timeG, int id)
 {
