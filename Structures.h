@@ -1,6 +1,8 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
 
+#include <stdbool.h>
+
 typedef struct stAvion Avion;
 typedef struct stPiste Piste;
 typedef struct stParking Parking;
@@ -15,6 +17,7 @@ struct stAvion
     int etat;      // 0: au sol, 1: en vol
     int NbPassagers;
     int time;
+    bool decolage;
     Avion *suivant;
 
 };
