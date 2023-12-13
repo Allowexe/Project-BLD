@@ -208,6 +208,142 @@ void AssgnBdd(EnVol **e, Parking **p)
     fclose(fichier);
 }
 
+void sauvegardeBdd(EnVol **e, Parking **p, Piste **pi, Taxis **t)
+{
+    FILE *fichier;
+    fichier = fopen("bdd.txt", "w");
+    if (fichier == NULL)
+    {
+        printf("Erreur lors de l'ouverture du fichier\n");
+        exit(1);
+    }
+    else
+    {
+        fprintf(fichier, "Nombre d'avions: %d\n", NB_AVION);
+        Avion *actuel = (*e)->premierG;
+        while (actuel != NULL)
+        {
+            fprintf(fichier, "ID: %d ", actuel->identifiant);
+            fprintf(fichier, "Categorie: %d ", actuel->categorie);
+            fprintf(fichier, "Etat: %d ", 1);
+            fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
+            fprintf(fichier, "Temps: %d\n", actuel->time);
+            actuel = actuel->suivant;
+        }
+        actuel = (*e)->premierM;
+        while (actuel != NULL)
+        {
+            fprintf(fichier, "ID: %d ", actuel->identifiant);
+            fprintf(fichier, "Categorie: %d ", actuel->categorie);
+            fprintf(fichier, "Etat: %d ", 1);
+            fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
+            fprintf(fichier, "Temps: %d\n", actuel->time);
+            actuel = actuel->suivant;
+        }
+        actuel = (*e)->premierP;
+        while (actuel != NULL)
+        {
+            fprintf(fichier, "ID: %d ", actuel->identifiant);
+            fprintf(fichier, "Categorie: %d ", actuel->categorie);
+            fprintf(fichier, "Etat: %d ", 1);
+            fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
+            fprintf(fichier, "Temps: %d\n", actuel->time);
+            actuel = actuel->suivant;
+        }
+        actuel = (*p)->premierG;
+        while (actuel != NULL)
+        {
+            fprintf(fichier, "ID: %d ", actuel->identifiant);
+            fprintf(fichier, "Categorie: %d ", actuel->categorie);
+            fprintf(fichier, "Etat: %d ", 0);
+            fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
+            fprintf(fichier, "Temps: %d\n", actuel->time);
+            actuel = actuel->suivant;
+        }
+        actuel = (*p)->premierM;
+        while (actuel != NULL)
+        {
+            fprintf(fichier, "ID: %d ", actuel->identifiant);
+            fprintf(fichier, "Categorie: %d ", actuel->categorie);
+            fprintf(fichier, "Etat: %d ", 0);
+            fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
+            fprintf(fichier, "Temps: %d\n", actuel->time);
+            actuel = actuel->suivant;
+        }
+        actuel = (*p)->premierP;
+        while (actuel != NULL)
+        {
+            fprintf(fichier, "ID: %d ", actuel->identifiant);
+            fprintf(fichier, "Categorie: %d ", actuel->categorie);
+            fprintf(fichier, "Etat: %d ", 0);
+            fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
+            fprintf(fichier, "Temps: %d\n", actuel->time);
+            actuel = actuel->suivant;
+        }
+        actuel = (*pi)->premierG;
+        if (actuel != NULL)
+        {
+            fprintf(fichier, "ID: %d ", actuel->identifiant);
+            fprintf(fichier, "Categorie: %d ", actuel->categorie);
+            fprintf(fichier, "Etat: %d ", 0);
+            fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
+            fprintf(fichier, "Temps: %d\n", actuel->time);
+        }
+        actuel = (*pi)->premierM;
+        if (actuel != NULL)
+        {
+            fprintf(fichier, "ID: %d ", actuel->identifiant);
+            fprintf(fichier, "Categorie: %d ", actuel->categorie);
+            fprintf(fichier, "Etat: %d ", 0);
+            fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
+            fprintf(fichier, "Temps: %d\n", actuel->time);
+        }
+        actuel = (*pi)->premierP;
+        if (actuel != NULL)
+        {
+            fprintf(fichier, "ID: %d ", actuel->identifiant);
+            fprintf(fichier, "Categorie: %d ", actuel->categorie);
+            fprintf(fichier, "Etat: %d ", 0);
+            fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
+            fprintf(fichier, "Temps: %d\n", actuel->time);
+        }
+        actuel = (*t)->premierG;
+        while (actuel != NULL)
+        {
+            fprintf(fichier, "ID: %d ", actuel->identifiant);
+            fprintf(fichier, "Categorie: %d ", actuel->categorie);
+            fprintf(fichier, "Etat: %d ", 0);
+            fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
+            fprintf(fichier, "Temps: %d\n", actuel->time);
+            actuel = actuel->suivant;
+        }
+        actuel = (*t)->premierM;
+        while (actuel != NULL)
+        {
+            fprintf(fichier, "ID: %d ", actuel->identifiant);
+            fprintf(fichier, "Categorie: %d ", actuel->categorie);
+            fprintf(fichier, "Etat: %d ", 0);
+            fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
+            fprintf(fichier, "Temps: %d\n", actuel->time);
+            actuel = actuel->suivant;
+        }
+        actuel = (*t)->premierP;
+        while (actuel != NULL)
+        {
+            fprintf(fichier, "ID: %d ", actuel->identifiant);
+            fprintf(fichier, "Categorie: %d ", actuel->categorie);
+            fprintf(fichier, "Etat: %d ", 0);
+            fprintf(fichier, "Passagers: %d ", actuel->NbPassagers);
+            fprintf(fichier, "Temps: %d\n", actuel->time);
+            actuel = actuel->suivant;
+        }
+        fclose(fichier);
+    }
+}
+
+//_______________________________________________________________________________________________________________________//
+        
+
 
 void ajouteEnFin(Avion **a, Avion *nouveau)
 {
