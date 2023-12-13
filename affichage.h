@@ -28,7 +28,7 @@ enum categoriePiste
     grande
 };
 
-void dessinAeroport();
+void dessinAeroport(int numParkG, int numParkM, int numParkP, int numTaxiG, int numTaxiM, int numTaxiP, int etatGPiste, int etatMPiste, int etatPPiste);
 void animBegining();
 
 #endif
