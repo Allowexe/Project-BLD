@@ -7,7 +7,6 @@
 
 int main(int argc, char const *argv[])
 {
-    animBegining();
     InitialisationBdd();
     Parking *p = malloc(sizeof(Parking));
     Piste *pi = malloc(sizeof(Piste));
@@ -17,14 +16,14 @@ int main(int argc, char const *argv[])
     time_t startTime = time(NULL);
     time_t currentTime;
     AssgnBdd(&e, &p);
+    animBegining();
     sleep(1.5);
     system("clear");
     while (1)
     {
         currentTime = time(NULL) - startTime;
-        printf("Temps écoulé : %ld secondes\n", currentTime);
         boucleMoteur(&e, &pi, &p, &t, currentTime);
-        sleep(1);
+        dessinAeroport(compteAvion(p->premierG), compteAvion(p->premierM), compteAvion(p->premierP), compteAvion(t->premierG), compteAvion(t->premierM), compteAvion(t->premierP), compteAvion(pi->premierG), compteAvion(pi->premierM), compteAvion(pi->premierP));
         system("clear");
     }
 
