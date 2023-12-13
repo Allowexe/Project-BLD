@@ -7,7 +7,6 @@
 void InitialisationBdd()
 {
     srand(time(NULL));
-    // création de la base de donnée
     FILE *fichier;
     int categorie = 0;
     int etat = 0;
@@ -377,10 +376,10 @@ void ajouteEnFinParId(Avion **nouveau, Avion *Ancien, int timeG, int id)
             actuel = actuel->suivant;
         }
 
-        if (actuel != NULL) // if a plane with the given id was found
+        if (actuel != NULL)
         {
             Avion *newNode = malloc(sizeof(*newNode));
-            *newNode = *actuel; // copy the data
+            *newNode = *actuel;
             newNode->suivant = NULL;
             newNode->time = timeG + 20;
 
@@ -430,31 +429,24 @@ int rechercheParTemps(Avion *a, int timeG, int **timeA)
 void supprimeAvion(Avion **a, int id)
 {
     Avion *temp = *a, *prev;
-
-    // If head node itself holds the key to be deleted
     if (temp != NULL && temp->identifiant == id)
     {
-        *a = temp->suivant; // Changed head
-        free(temp);         // free old head
+        *a = temp->suivant;
+        free(temp);
         return;
     }
-
-    // Search for the key to be deleted, keep track of the
-    // previous node as we need to change 'prev->suivant'
     while (temp != NULL && temp->identifiant != id)
     {
         prev = temp;
         temp = temp->suivant;
     }
 
-    // If key was not present in linked list
     if (temp == NULL)
         return;
 
-    // Unlink the node from linked list
     prev->suivant = temp->suivant;
 
-    free(temp); // Free memory
+    free(temp);
 }
 
 int compteAvion(Avion *a)
