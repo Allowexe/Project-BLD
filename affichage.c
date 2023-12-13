@@ -199,7 +199,7 @@ void dessinAeroport(int numParkG, int numParkM, int numParkP, int numTaxiG, int 
         printf("%s", milieuGPiste);
         printf("%s", bordGpiste);
 
-        usleep(1000000);
+        usleep(800000);
     }
 }
 
@@ -292,6 +292,6 @@ void animBegining()
         printf("%s\n",buff10);
         printf("%s\n",buff11);
         printf("%s\n",buff12);
-        usleep(20000);
+        usleep(30000);
     }
 }
