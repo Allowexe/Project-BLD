@@ -1,5 +1,5 @@
 #include "BDD.h"
-#include "initStruct.h"
+#include "InitStruct.h"
 #include "Structures.h"
 #include "includeGlobal.h"
 
