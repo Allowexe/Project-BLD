@@ -3,6 +3,7 @@
 #include "moteur.h"
 #include "Structures.h"
 #include "includeGlobal.h"
+#include "affichage.h"
 
 int main(int argc, char const *argv[])
 {
@@ -14,6 +15,9 @@ int main(int argc, char const *argv[])
     init(&p, &pi, &t, &e);
     time_t startTime = time(NULL);
     time_t currentTime;
+    animBegining();
+    sleep(1.5);
+    system("clear");
     AssgnBdd(&e, &p);
     boucleMoteur(&e, &pi, &p, &t, currentTime, startTime);
     return 0;
